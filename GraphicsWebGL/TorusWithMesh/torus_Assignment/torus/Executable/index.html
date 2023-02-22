@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  <title>Torus Knot- Assignment 3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Eczar:400,500,600,700,800&amp;subset=devanagari,latin-ext" rel="stylesheet">
+  <script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
+  <script id="vertexShader" type="x-shader/x-vertex">
+    precision mediump float;
+
+		attribute vec3 vPosition;
+    attribute vec2 vTexCoord;
+    attribute vec3 vNormal;
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+    varying vec4 fColor;
+    varying float vertexColor;
+    varying vec3 L, N, E;
+    //varying vec3 pos; 
+
+    uniform mat4 modelMatrix;
+    uniform mat4 viewMatrix;
+    uniform mat4 projectionMatrix;
+
+		void main() {                                                  
+      //vec3 pos = (viewMatrix * modelMatrix * vec4(vPosition, 1.0)).xyz;
+      fTexCoord = vTexCoord;
+      fNormal = (modelMatrix * vec4(vNormal, 0.0)).xyz;
+			gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 1.0);
+		}
+	</script>
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+    varying vec4 fColor;
+    varying float vertexColor;
+    varying vec3 L, N, E;
+    varying vec3 pos;
+
+    uniform sampler2D texture;
+    uniform float wireMode;
+
+    void main() {
+      
+      vec3 ambientLightIntensity = vec3(0.1,0.1,0.1);
+      vec3 sunlightIntensity = vec3(0.9,0.9,0.9);
+      vec3 sunlightDirection = normalize(vec3(3.0,4.0,-2.0));
+
+      vec4 texel = texture2D(texture, fTexCoord);
+      vec3 lightIntensity = ambientLightIntensity + sunlightIntensity + max(dot(fNormal, sunlightDirection),0.0); 
+      //ffColor.a = 1.0;
+      
+      if(wireMode == 0.0) {
+        gl_FragColor = vec4(fNormal, 1.0);
+      } else {
+        gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a);
+      }
+    }
+	</script>
+  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="../../Dependencies/math.js"></script>
+  <script type="text/javascript" src="../../Dependencies/initShaders.js"></script>
+  <script type="text/javascript" src="../../Dependencies/MV.js"></script>
+  
+  <script type="text/javascript" src="../Source/Mesh.js"></script>
+
+  <script type="text/javascript" src="../Source/toroid.js"></script>
+</head>
+
+<body>
+  <canvas id="render-surface" width="800" height="400">
+    Your browser doesn't support HTML5 canvas! upgrad.
+  </canvas>
+  <p></p>
+  <form class="pure-form">
+    <fieldset>
+      Radius:  <input id="torRadius" type="range" class="slider" min="0.1" max="20" step="0.01" value="5" /> 
+     
+        <p><button type="button" id="toggleRotation" class="pure button green-button hover-animation-b"> Toggle Rotation </button>
+          <button type="button" id="defcam" class="pure button green-button hover-animation-b"> Default Camera Angle </button>
+          
+          <button type="button" id="changeTorus" class="pure button green-button hover-animation-b"> Change Torus </button>
+          <button type="button" id="phong" class="pure button green-button hover-animation-b"> Phong </button>
+          <button type="button" id="gouraud " class="pure button green-button hover-animation-b">Gouraud</button>
+          <button type="button" id="wireframe" class="pure button green-button hover-animation-b"> Wireframe </button>
+          <!--<input type="button" id="camspd" class="green-input pure-input-rounded" min="1" max="10" step="0.5" value="2" height="0" width="0" />-->
+    </fieldset>
+  </form>
+
+  <img id="crate" src="../Source/crate.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow" src="../Source/rainbowWrap.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow2" src="../Source/rainbowWrap2.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rays" src="../Source/rays.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="metal" src="../Source/metal.png" width="0" height="0" crossorigin="Anonymous"></img>
+ 
+</body>
+
+</html>
