@@ -1,2 +1,1 @@
 Atay KAYLAR- 21703284
-Zeynep Korkunç- 21702571
